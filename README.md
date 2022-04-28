@@ -25,6 +25,22 @@ So running this:
 
 Will serve two databases: the original at `/fixtures` and the in-memory copy at `/fixtures_memory`.
 
+## Configuration
+
+By default every attached database file will be loaded into a `_memory` copy.
+
+You can use plugin configuration to specify just a subset of the database. For example, to create `github_memory` but not `fixtures_memory` you would use the following `metadata.yml` file:
+
+```yaml
+plugins:
+  datasette-copy-to-memory:
+    databases:
+    - github
+```
+Then start Datasette like this:
+
+    datasette github.db fixtures.db -m metadata.yml
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:
