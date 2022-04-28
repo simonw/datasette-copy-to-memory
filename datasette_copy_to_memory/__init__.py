@@ -13,7 +13,6 @@ def startup(datasette):
                 if db.name not in databases:
                     continue
             if db.path:
-                # Ensure the in-memory database is initalized
                 memory_name = "{}_memory".format(db.name)
                 datasette.add_memory_database(memory_name)
                 # Use a different in-memory database to co-ordinate the VACUUM INTO

@@ -80,5 +80,6 @@ async def test_copy_to_memory_queries(
     names = {r["name"] for r in response.json()}
     assert names == expected_databases
     # Check we didn't accidentally create file:nonetest?mode=memory... files
+    # https://github.com/simonw/datasette-copy-to-memory/issues/4
     bad_files = list(pathlib.Path(".").glob("file:*"))
     assert not bad_files
