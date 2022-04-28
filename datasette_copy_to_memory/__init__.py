@@ -15,8 +15,7 @@ def startup(datasette):
             if db.path:
                 # Ensure the in-memory database is initalized
                 memory_name = "{}_memory".format(db.name)
-                memory_db = datasette.add_memory_database(memory_name)
-                await memory_db.execute("select 1 + 1")
+                datasette.add_memory_database(memory_name)
                 # Use a different in-memory database to co-ordinate the VACUUM INTO
                 tmp = sqlite3.connect(":memory:", uri=True)
                 tmp.execute("ATTACH DATABASE ? AS _copy_from", [db.path])
