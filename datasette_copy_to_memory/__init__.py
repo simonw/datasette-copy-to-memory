@@ -1,4 +1,5 @@
 from datasette import hookimpl
+from datasette.utils import sqlite3
 
 
 @hookimpl
@@ -12,17 +13,16 @@ def startup(datasette):
                 if db.name not in databases:
                     continue
             if db.path:
+                # Ensure the in-memory database is initalized
                 memory_name = "{}_memory".format(db.name)
                 memory_db = datasette.add_memory_database(memory_name)
-                # Ensure the in-memory database is initalized
                 await memory_db.execute("select 1 + 1")
-
-                def vacuum_into(conn):
-                    conn.execute(
-                        "VACUUM INTO ?",
-                        ["file:{}?mode=memory&cache=shared".format(memory_name)],
-                    )
-
-                await db.execute_write_fn(vacuum_into)
+                # Use a different in-memory database to co-ordinate the VACUUM INTO
+                tmp = sqlite3.connect(":memory:")
+                tmp.execute("ATTACH DATABASE ? AS _copy_from", [db.path])
+                tmp.execute(
+                    "VACUUM _copy_from INTO ?",
+                    ["file:{}?mode=memory&cache=shared".format(memory_name)],
+                )
 
     return inner

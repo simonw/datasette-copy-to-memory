@@ -27,7 +27,7 @@ def ds(tmp_path_factory):
     db_paths = []
     for name in ("test.db", "test2.db"):
         db_paths.append(make_db(db_directory, name))
-    return Datasette(db_paths)
+    return Datasette([db_paths[0]], immutables=[db_paths[1]])
 
 
 @pytest.mark.asyncio
