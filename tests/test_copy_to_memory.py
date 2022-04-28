@@ -1,5 +1,6 @@
 from re import S
 from datasette.app import Datasette
+import pathlib
 import pytest
 import sqlite_utils
 
@@ -78,3 +79,6 @@ async def test_copy_to_memory_queries(
     response = await ds.client.get("/-/databases.json")
     names = {r["name"] for r in response.json()}
     assert names == expected_databases
+    # Check we didn't accidentally create file:nonetest?mode=memory... files
+    bad_files = list(pathlib.Path(".").glob("file:*"))
+    assert not bad_files

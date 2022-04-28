@@ -18,7 +18,7 @@ def startup(datasette):
                 memory_db = datasette.add_memory_database(memory_name)
                 await memory_db.execute("select 1 + 1")
                 # Use a different in-memory database to co-ordinate the VACUUM INTO
-                tmp = sqlite3.connect(":memory:")
+                tmp = sqlite3.connect(":memory:", uri=True)
                 tmp.execute("ATTACH DATABASE ? AS _copy_from", [db.path])
                 tmp.execute(
                     "VACUUM _copy_from INTO ?",
