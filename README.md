@@ -25,6 +25,10 @@ So running this:
 
 Will serve two databases: the original at `/fixtures` and the in-memory copy at `/fixtures_memory`.
 
+## Demo
+
+A demo is running on [latest-with-plugins.datasette.io](https://latest-with-plugins.datasette.io/) - the [/fixtures_memory](https://latest-with-plugins.datasette.io/fixtures_memory) table there is provided by this plugin.
+
 ## Configuration
 
 By default every attached database file will be loaded into a `_memory` copy.
