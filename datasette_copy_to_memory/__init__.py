@@ -6,6 +6,7 @@ from datasette.utils import sqlite3
 def startup(datasette):
     plugin_config = datasette.plugin_config("datasette-copy-to-memory") or {}
     databases = plugin_config.get("databases")
+    replace = plugin_config.get("replace")
 
     async def inner():
         for db in datasette.databases.values():
@@ -14,6 +15,11 @@ def startup(datasette):
                     continue
             if db.path:
                 memory_name = "{}_memory".format(db.name)
+                if replace:
+                    memory_name = db.name
+                    datasette.remove_database(db.name)
+                else:
+                    memory_name = "{}_memory".format(db.name)
                 memory_db = datasette.add_memory_database(memory_name)
                 await memory_db.execute("select 1 + 1")
                 # Use a different in-memory database to co-ordinate the VACUUM INTO

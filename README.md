@@ -45,6 +45,19 @@ Then start Datasette like this:
 
     datasette github.db fixtures.db -m metadata.yml
 
+If you don't want to have a `fixtures` and `fixtures_memory` database, you can use `replace: true` to have the plugin replace the file-backed database with the new in-memory one, reusing the same database name:
+
+```yaml
+plugins:
+  datasette-copy-to-memory:
+    replace: true
+```
+Then:
+
+    datasette github.db fixtures.db -m metadata.yml
+
+This will result in both `/github` and `/fixtures` but no `/github_memory` or `/fixtures_memory`.
+
 ## Development
 
 To set up this plugin locally, first checkout the code. Then create a new virtual environment:

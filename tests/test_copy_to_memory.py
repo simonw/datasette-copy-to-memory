@@ -83,3 +83,31 @@ async def test_copy_to_memory_queries(
     # https://github.com/simonw/datasette-copy-to-memory/issues/4
     bad_files = list(pathlib.Path(".").glob("file:*"))
     assert not bad_files
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "metadata,db_name,expected_names_and_memory",
+    (
+        (
+            None,
+            "replacetest",
+            {"replacetest": False, "replacetest_memory": True},
+        ),
+        (
+            {"plugins": {"datasette-copy-to-memory": {"replace": True}}},
+            "replacetest2",
+            {"replacetest2": True},
+        ),
+    ),
+)
+async def test_copy_to_memory_replace(
+    tmp_path_factory, metadata, db_name, expected_names_and_memory
+):
+    db_directory = tmp_path_factory.mktemp("db")
+    db_paths = [make_db(db_directory, db_name)]
+    ds = Datasette(db_paths, metadata=metadata)
+    await ds.invoke_startup()
+    response = await ds.client.get("/-/databases.json")
+    names_and_memory = {r["name"]: r["is_memory"] for r in response.json()}
+    assert names_and_memory == expected_names_and_memory
